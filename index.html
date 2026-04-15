@@ -892,11 +892,63 @@
 				display.textContent = tableNum ? `Meja ${tableNum}${customerName ? " · " + customerName : ""}` : "Pilih meja dulu";
 			}
 
+			// ASLI
+			// async function submitOrder() {
+			// 	if (!tableNum) {
+			// 		alert("Isi nomor meja dulu ya!");
+			// 		return;
+			// 	}
+			// 	const items = Object.values(cart).map(({ item, qty }) => ({
+			// 		id: item.id,
+			// 		nama: item.nama,
+			// 		harga: item.harga,
+			// 		qty,
+			// 		subtotal: item.harga * qty,
+			// 	}));
+			// 	if (!items.length) return;
+			// 	const total = items.reduce((s, i) => s + i.subtotal, 0);
+			// 	const note = document.getElementById("orderNote")?.value || "";
+			// 	const orderId = "#" + String(Date.now()).slice(-4);
+
+			// 	const payload = {
+			// 		action: "submitOrder",
+			// 		nomorMeja: tableNum,
+			// 		namaPelanggan: customerName,
+			// 		items,
+			// 		total,
+			// 		catatan: note,
+			// 		waktu: new Date().toLocaleString("id-ID"),
+			// 	};
+
+			// 	document.getElementById("orderBtn").disabled = true;
+			// 	document.getElementById("orderBtn").textContent = "Mengirim...";
+
+			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
+			// 		try {
+			// 			await fetch(APPS_SCRIPT_URL, {
+			// 				method: "POST",
+			// 				body: JSON.stringify(payload),
+			// 			});
+			// 		} catch (e) {
+			// 			console.log("Offline mode");
+			// 		}
+			// 	}
+
+			// 	cart = {};
+			// 	updateCartCount();
+			// 	closeCart();
+			// 	renderItems();
+			// 	document.getElementById("successOrderId").textContent = orderId;
+			// 	document.getElementById("successScreen").classList.add("show");
+			// }
+
+			// DEVELOPMENT
 			async function submitOrder() {
 				if (!tableNum) {
 					alert("Isi nomor meja dulu ya!");
 					return;
 				}
+
 				const items = Object.values(cart).map(({ item, qty }) => ({
 					id: item.id,
 					nama: item.nama,
@@ -904,10 +956,11 @@
 					qty,
 					subtotal: item.harga * qty,
 				}));
+
 				if (!items.length) return;
+
 				const total = items.reduce((s, i) => s + i.subtotal, 0);
 				const note = document.getElementById("orderNote")?.value || "";
-				const orderId = "#" + String(Date.now()).slice(-4);
 
 				const payload = {
 					action: "submitOrder",
@@ -916,28 +969,35 @@
 					items,
 					total,
 					catatan: note,
-					waktu: new Date().toLocaleString("id-ID"),
 				};
 
-				document.getElementById("orderBtn").disabled = true;
-				document.getElementById("orderBtn").textContent = "Mengirim...";
+				try {
+					const res = await fetch(APPS_SCRIPT_URL, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(payload),
+					});
 
-				if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
-					try {
-						await fetch(APPS_SCRIPT_URL, {
-							method: "POST",
-							body: JSON.stringify(payload),
-						});
-					} catch (e) {
-						console.log("Offline mode");
+					const result = await res.json();
+
+					if (!result.success) {
+						alert("Gagal kirim order!");
+						return;
 					}
+
+					document.getElementById("successOrderId").textContent = result.orderId;
+				} catch (e) {
+					console.error(e);
+					alert("Gagal koneksi ke server");
+					return;
 				}
 
 				cart = {};
 				updateCartCount();
 				closeCart();
 				renderItems();
-				document.getElementById("successOrderId").textContent = orderId;
 				document.getElementById("successScreen").classList.add("show");
 			}
 
