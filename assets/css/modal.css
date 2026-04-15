@@ -1,0 +1,321 @@
+/* #modal-css-snippet {
+} */
+
+/* ── MODAL OVERLAY ── */
+.proj-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 2000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.5rem;
+	background: rgba(5, 5, 8, 0.85);
+	backdrop-filter: blur(18px);
+	-webkit-backdrop-filter: blur(18px);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.proj-overlay.active {
+	opacity: 1;
+	pointer-events: all;
+}
+
+/* ── MODAL CARD ── */
+.proj-modal {
+	position: relative;
+	width: 100%;
+	max-width: 780px;
+	max-height: 90vh;
+	overflow-y: auto;
+	background: rgba(13, 13, 18, 0.95);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	scrollbar-width: thin;
+	scrollbar-color: #333 transparent;
+
+	/* clip-path jajar genjang halus di sudut */
+	clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px));
+
+	transform: translateY(40px) scale(0.97);
+	transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.proj-overlay.active .proj-modal {
+	transform: translateY(0) scale(1);
+}
+
+/* ── CORNER ACCENT ── */
+.proj-modal::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 28px;
+	height: 28px;
+	background: rgba(255, 255, 255, 0.06);
+	clip-path: polygon(0 0, 100% 100%, 100% 0);
+	z-index: 1;
+}
+
+/* ── CLOSE BUTTON ── */
+.proj-close {
+	position: absolute;
+	top: 1.2rem;
+	right: 1.2rem;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--grey5);
+	font-size: 1rem;
+	cursor: pointer;
+	z-index: 10;
+	transition:
+		background 0.2s,
+		color 0.2s,
+		border-color 0.2s;
+	line-height: 1;
+}
+.proj-close:hover {
+	background: rgba(255, 255, 255, 0.12);
+	color: var(--white);
+	border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── IMAGE HERO ── */
+.proj-img {
+	width: 100%;
+	aspect-ratio: 16/8;
+	overflow: hidden;
+	position: relative;
+}
+.proj-img img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	filter: grayscale(40%) brightness(0.7);
+	transition: filter 0.5s;
+}
+.proj-overlay.active .proj-img img {
+	filter: grayscale(10%) brightness(0.85);
+}
+.proj-img::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to bottom, transparent 40%, rgba(13, 13, 18, 0.98) 100%);
+	pointer-events: none;
+}
+
+/* ── TAB BAR (seperti file tab) ── */
+.proj-tab-bar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	gap: 1px;
+}
+.proj-tab {
+	font-family: var(--mono);
+	font-size: 0.58rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--grey4);
+	background: rgba(13, 13, 18, 0.9);
+	border-right: 1px solid rgba(255, 255, 255, 0.06);
+	padding: 0.45rem 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.proj-tab.active-tab {
+	color: var(--white);
+	background: rgba(42, 42, 53, 0.9);
+	border-bottom-color: transparent;
+}
+
+/* ── BODY CONTENT ── */
+.proj-body {
+	padding: 2rem 2.5rem 2.5rem;
+}
+
+/* ── META ROW ── */
+.proj-meta-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+.proj-category {
+	font-family: var(--mono);
+	font-size: 0.6rem;
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	color: var(--grey4);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.proj-category::before {
+	content: "";
+	display: inline-block;
+	width: 16px;
+	height: 1px;
+	background: var(--grey3);
+}
+.proj-year {
+	font-family: var(--mono);
+	font-size: 0.6rem;
+	letter-spacing: 0.2em;
+	color: var(--grey3);
+}
+
+/* ── TITLE ── */
+.proj-title {
+	font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+	font-weight: 800;
+	letter-spacing: -0.025em;
+	line-height: 1.05;
+	margin-bottom: 1.2rem;
+}
+
+/* ── DIVIDER ── */
+.proj-divider {
+	width: 100%;
+	height: 1px;
+	background: var(--border);
+	margin: 1.5rem 0;
+}
+
+/* ── DESCRIPTION ── */
+.proj-desc {
+	font-family: var(--mono);
+	font-size: 0.78rem;
+	line-height: 2;
+	color: var(--grey5);
+	margin-bottom: 1.8rem;
+}
+
+/* ── DETAIL GRID ── */
+.proj-details {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1px;
+	background: var(--border);
+	border: 1px solid var(--border);
+	margin-bottom: 2rem;
+}
+.proj-detail-item {
+	background: rgba(13, 13, 18, 0.9);
+	padding: 1.2rem 1rem;
+}
+.proj-detail-label {
+	font-family: var(--mono);
+	font-size: 0.55rem;
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	color: var(--grey4);
+	margin-bottom: 0.5rem;
+}
+.proj-detail-value {
+	font-size: 0.9rem;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+/* ── TECH STACK ── */
+.proj-stack-label {
+	font-family: var(--mono);
+	font-size: 0.58rem;
+	letter-spacing: 0.3em;
+	text-transform: uppercase;
+	color: var(--grey4);
+	margin-bottom: 0.8rem;
+}
+.proj-stack {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-bottom: 2rem;
+}
+.proj-stack-pill {
+	font-family: var(--mono);
+	font-size: 0.62rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--grey5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	padding: 0.35rem 0.85rem;
+	transition:
+		border-color 0.2s,
+		color 0.2s,
+		background 0.2s;
+}
+.proj-stack-pill:hover {
+	border-color: rgba(255, 255, 255, 0.35);
+	color: var(--white);
+	background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── ACTION BUTTONS ── */
+.proj-actions {
+	display: flex;
+	gap: 0.8rem;
+	flex-wrap: wrap;
+}
+.proj-btn {
+	font-family: var(--mono);
+	font-size: 0.62rem;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	text-decoration: none;
+	padding: 0.85rem 1.6rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	transition: all 0.2s;
+	cursor: pointer;
+	border: none;
+}
+.proj-btn-primary {
+	background: var(--white);
+	color: var(--black);
+	clip-path: polygon(0 0, 100% 0, 100% 70%, calc(100% - 10px) 100%, 0 100%);
+}
+.proj-btn-primary:hover {
+	opacity: 0.85;
+	transform: translateY(-1px);
+}
+.proj-btn-secondary {
+	background: transparent;
+	color: var(--grey5);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.proj-btn-secondary:hover {
+	color: var(--white);
+	border-color: rgba(255, 255, 255, 0.4);
+	background: rgba(255, 255, 255, 0.04);
+}
+.proj-btn i {
+	font-size: 1rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+	.proj-body {
+		padding: 1.5rem 1.2rem 2rem;
+	}
+	.proj-details {
+		grid-template-columns: 1fr 1fr;
+	}
+	.proj-actions {
+		flex-direction: column;
+	}
+	.proj-btn {
+		justify-content: center;
+	}
+}
