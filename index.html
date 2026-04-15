@@ -706,7 +706,7 @@
 			// =============================================
 			// KONFIGURASI — GANTI DENGAN URL APPS SCRIPT KAMU
 			// =============================================
-			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYKOrxZ23glEBkd7HjjA-gv2dma_ndA7J1I53eHY6vOXw_R7acG0l9uyFwXE0dlxS4EA/exec";
+			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec";
 			// =============================================
 
 			let menuData = [];
@@ -731,7 +731,7 @@
 			const CATEGORY_ICONS = { Minuman: "☕", Makanan: "🍽", Dessert: "🍮", Snack: "🥨" };
 
 			async function loadMenu() {
-				if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbxYKOrxZ23glEBkd7HjjA-gv2dma_ndA7J1I53eHY6vOXw_R7acG0l9uyFwXE0dlxS4EA/exec") {
+				if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
 					menuData = DEMO_MENU;
 					renderMenu();
 					return;
@@ -922,7 +922,7 @@
 				document.getElementById("orderBtn").disabled = true;
 				document.getElementById("orderBtn").textContent = "Mengirim...";
 
-				if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxYKOrxZ23glEBkd7HjjA-gv2dma_ndA7J1I53eHY6vOXw_R7acG0l9uyFwXE0dlxS4EA/exec") {
+				if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
 					try {
 						await fetch(APPS_SCRIPT_URL, {
 							method: "POST",
