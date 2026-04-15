@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Kopi & Rasa — Menu</title>
-		<link rel="icon" href="data:,">
+		<link rel="icon" href="data:," />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 		<style>
@@ -707,7 +707,7 @@
 			// =============================================
 			// KONFIGURASI — GANTI DENGAN URL APPS SCRIPT KAMU
 			// =============================================
-			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec";
+			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxo4D_ZWkeNy-6Je63zjXGe7DoIXRZOsLsfMAdMXKdw9IPyAb3bUDSkL-d7xYEZnqPqZg/exec";
 			// =============================================
 
 			let menuData = [];
@@ -731,20 +731,37 @@
 
 			const CATEGORY_ICONS = { Minuman: "☕", Makanan: "🍽", Dessert: "🍮", Snack: "🥨" };
 
+			// ASLI
+			// async function loadMenu() {
+			// 	if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbxo4D_ZWkeNy-6Je63zjXGe7DoIXRZOsLsfMAdMXKdw9IPyAb3bUDSkL-d7xYEZnqPqZg/exec") {
+			// 		menuData = DEMO_MENU;
+			// 		renderMenu();
+			// 		return;
+			// 	}
+			// 	try {
+			// 		const res = await fetch(`${APPS_SCRIPT_URL}?action=getMenu`);
+			// 		const data = await res.json();
+			// 		menuData = data.menu || [];
+			// 		renderMenu();
+			// 	} catch (e) {
+			// 		menuData = DEMO_MENU;
+			// 		renderMenu();
+			// 	}
+			// }
+
+			// DEVELOPMENT
 			async function loadMenu() {
-				if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
-					menuData = DEMO_MENU;
-					renderMenu();
-					return;
-				}
 				try {
 					const res = await fetch(`${APPS_SCRIPT_URL}?action=getMenu`);
 					const data = await res.json();
 					menuData = data.menu || [];
+					if (!menuData.length) {
+						document.getElementById("menuContainer").innerHTML = '<div class="loading-state">Menu kosong. Tambahkan item di Google Sheets dulu ya!</div>';
+						return;
+					}
 					renderMenu();
 				} catch (e) {
-					menuData = DEMO_MENU;
-					renderMenu();
+					document.getElementById("menuContainer").innerHTML = '<div class="loading-state">Gagal memuat menu. Cek koneksi.</div>';
 				}
 			}
 
@@ -924,7 +941,7 @@
 			// 	document.getElementById("orderBtn").disabled = true;
 			// 	document.getElementById("orderBtn").textContent = "Mengirim...";
 
-			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
+			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxo4D_ZWkeNy-6Je63zjXGe7DoIXRZOsLsfMAdMXKdw9IPyAb3bUDSkL-d7xYEZnqPqZg/exec") {
 			// 		try {
 			// 			await fetch(APPS_SCRIPT_URL, {
 			// 				method: "POST",
@@ -957,49 +974,47 @@
 					qty,
 					subtotal: item.harga * qty,
 				}));
-
 				if (!items.length) return;
 
 				const total = items.reduce((s, i) => s + i.subtotal, 0);
 				const note = document.getElementById("orderNote")?.value || "";
 
-				const payload = {
+				// Kirim via GET params — tidak ada preflight, tidak ada CORS error
+				const params = new URLSearchParams({
 					action: "submitOrder",
 					nomorMeja: tableNum,
 					namaPelanggan: customerName,
-					items,
-					total,
+					items: JSON.stringify(items),
+					total: total,
 					catatan: note,
-				};
+				});
+
+				document.getElementById("orderBtn").disabled = true;
+				document.getElementById("orderBtn").textContent = "Mengirim...";
 
 				try {
-					const res = await fetch(APPS_SCRIPT_URL, {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(payload),
-					});
-
+					const res = await fetch(`${APPS_SCRIPT_URL}?${params}`);
 					const result = await res.json();
 
 					if (!result.success) {
-						alert("Gagal kirim order!");
+						alert("Gagal kirim order: " + (result.error || ""));
+						document.getElementById("orderBtn").disabled = false;
+						document.getElementById("orderBtn").textContent = "Pesan Sekarang";
 						return;
 					}
 
 					document.getElementById("successOrderId").textContent = result.orderId;
+					cart = {};
+					updateCartCount();
+					closeCart();
+					renderItems();
+					document.getElementById("successScreen").classList.add("show");
 				} catch (e) {
 					console.error(e);
 					alert("Gagal koneksi ke server");
-					return;
+					document.getElementById("orderBtn").disabled = false;
+					document.getElementById("orderBtn").textContent = "Pesan Sekarang";
 				}
-
-				cart = {};
-				updateCartCount();
-				closeCart();
-				renderItems();
-				document.getElementById("successScreen").classList.add("show");
 			}
 
 			function backToMenu() {
