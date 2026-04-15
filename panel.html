@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Admin — Kopi & Rasa</title>
-		<link rel="icon" href="data:,">
+		<link rel="icon" href="data:," />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -801,7 +801,7 @@
 			// =============================================
 			// KONFIGURASI — GANTI DENGAN URL APPS SCRIPT KAMU
 			// =============================================
-			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec";
+			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynvGu05JrJE4VyFVCVMPcs-scvGtt603VAOrMqgYLMNtt88T_dt2otOYjUcEtEUaWQrg/exec";
 			// =============================================
 
 			let allOrders = [];
@@ -866,7 +866,7 @@
 			const CAT_ICONS = { Minuman: "☕", Makanan: "🍽", Dessert: "🍮", Snack: "🥨" };
 
 			async function loadAllData() {
-				if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
+				if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbynvGu05JrJE4VyFVCVMPcs-scvGtt603VAOrMqgYLMNtt88T_dt2otOYjUcEtEUaWQrg/exec") {
 					allOrders = DEMO_ORDERS;
 					allMenu = DEMO_MENU;
 				} else {
@@ -937,13 +937,37 @@
 					.join("");
 			}
 
+			// ASLI
+			// async function updateStatus(orderId, newStatus) {
+			// 	if (!newStatus) return;
+			// 	const order = allOrders.find((o) => o.id === orderId);
+			// 	if (order) order.status = newStatus;
+			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbynvGu05JrJE4VyFVCVMPcs-scvGtt603VAOrMqgYLMNtt88T_dt2otOYjUcEtEUaWQrg/exec") {
+			// 		fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "updateStatus", orderId, status: newStatus }) }).catch(() => {});
+			// 	}
+			// 	renderOrders();
+			// 	showNotif(`Status ${orderId} diubah ke "${newStatus}"`);
+			// }
+
+			// DEVELOPMENT
 			async function updateStatus(orderId, newStatus) {
 				if (!newStatus) return;
 				const order = allOrders.find((o) => o.id === orderId);
 				if (order) order.status = newStatus;
-				if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
-					fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "updateStatus", orderId, status: newStatus }) }).catch(() => {});
+
+				// Ganti POST → GET params
+				const params = new URLSearchParams({
+					action: "updateStatus",
+					orderId: orderId,
+					status: newStatus,
+				});
+
+				try {
+					await fetch(`${APPS_SCRIPT_URL}?${params}`);
+				} catch (e) {
+					console.log("Gagal sync status:", e);
 				}
+
 				renderOrders();
 				showNotif(`Status ${orderId} diubah ke "${newStatus}"`);
 			}
@@ -983,6 +1007,34 @@
 				document.getElementById("fTersedia").checked = item.tersedia;
 			}
 
+			// ASLI
+			// async function saveMenu() {
+			// 	const id = document.getElementById("editId").value;
+			// 	const item = {
+			// 		id: id || String(Date.now()),
+			// 		nama: document.getElementById("fNama").value,
+			// 		kategori: document.getElementById("fKategori").value,
+			// 		harga: parseInt(document.getElementById("fHarga").value) || 0,
+			// 		deskripsi: document.getElementById("fDeskripsi").value,
+			// 		foto: document.getElementById("fFoto").value,
+			// 		tersedia: document.getElementById("fTersedia").checked,
+			// 	};
+			// 	if (!item.nama || !item.harga) {
+			// 		showNotif("Nama dan harga wajib diisi!");
+			// 		return;
+			// 	}
+			// 	const idx = allMenu.findIndex((m) => m.id === id);
+			// 	if (idx >= 0) allMenu[idx] = item;
+			// 	else allMenu.push(item);
+			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbynvGu05JrJE4VyFVCVMPcs-scvGtt603VAOrMqgYLMNtt88T_dt2otOYjUcEtEUaWQrg/exec") {
+			// 		fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "saveMenu", item }) }).catch(() => {});
+			// 	}
+			// 	renderMenuList();
+			// 	clearForm();
+			// 	showNotif(id ? "Menu berhasil diperbarui!" : "Menu baru berhasil ditambahkan!");
+			// }
+
+			// DEVELOPMENT
 			async function saveMenu() {
 				const id = document.getElementById("editId").value;
 				const item = {
@@ -994,19 +1046,29 @@
 					foto: document.getElementById("fFoto").value,
 					tersedia: document.getElementById("fTersedia").checked,
 				};
+
 				if (!item.nama || !item.harga) {
 					showNotif("Nama dan harga wajib diisi!");
 					return;
 				}
-				const idx = allMenu.findIndex((m) => m.id === id);
-				if (idx >= 0) allMenu[idx] = item;
-				else allMenu.push(item);
-				if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbx9Jqiq2XwP-6YaeR2MhW8_RrvxQS5QFYdIIyZSwOfQL-H9AEj6YHXrgULTU02ty5KMMA/exec") {
-					fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "saveMenu", item }) }).catch(() => {});
+
+				// Ganti POST → GET params, item di-JSON stringify
+				const params = new URLSearchParams({
+					action: "saveMenu",
+					item: JSON.stringify(item),
+				});
+
+				try {
+					await fetch(`${APPS_SCRIPT_URL}?${params}`);
+					const idx = allMenu.findIndex((m) => m.id === id);
+					if (idx >= 0) allMenu[idx] = item;
+					else allMenu.push(item);
+					renderMenuList();
+					clearForm();
+					showNotif(id ? "Menu berhasil diperbarui!" : "Menu baru berhasil ditambahkan!");
+				} catch (e) {
+					showNotif("Gagal menyimpan menu, cek koneksi!");
 				}
-				renderMenuList();
-				clearForm();
-				showNotif(id ? "Menu berhasil diperbarui!" : "Menu baru berhasil ditambahkan!");
 			}
 
 			function clearForm() {
