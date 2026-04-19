@@ -4,7 +4,8 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Kopi & Rasa — Menu</title>
-		<link rel="icon" href="data:," />
+		<link href="assets/img/logo_link.jpg" rel="icon" />
+		<!-- <link rel="icon" href="data:," /> -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 		<style>
@@ -707,7 +708,7 @@
 			// =============================================
 			// KONFIGURASI — GANTI DENGAN URL APPS SCRIPT KAMU
 			// =============================================
-			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynvGu05JrJE4VyFVCVMPcs-scvGtt603VAOrMqgYLMNtt88T_dt2otOYjUcEtEUaWQrg/exec";
+			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXPKbGo5rj6iiA8yOKqcWph39nf5VTBWcKCRcWFlhjBhsHfbwULMZLVuXD8Swfp8J-LA/exec";
 			// =============================================
 
 			let menuData = [];
@@ -733,7 +734,7 @@
 
 			// ASLI
 			// async function loadMenu() {
-			// 	if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbynvGu05JrJE4VyFVCVMPcs-scvGtt603VAOrMqgYLMNtt88T_dt2otOYjUcEtEUaWQrg/exec") {
+			// 	if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbwXPKbGo5rj6iiA8yOKqcWph39nf5VTBWcKCRcWFlhjBhsHfbwULMZLVuXD8Swfp8J-LA/exec") {
 			// 		menuData = DEMO_MENU;
 			// 		renderMenu();
 			// 		return;
@@ -941,7 +942,7 @@
 			// 	document.getElementById("orderBtn").disabled = true;
 			// 	document.getElementById("orderBtn").textContent = "Mengirim...";
 
-			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbynvGu05JrJE4VyFVCVMPcs-scvGtt603VAOrMqgYLMNtt88T_dt2otOYjUcEtEUaWQrg/exec") {
+			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbwXPKbGo5rj6iiA8yOKqcWph39nf5VTBWcKCRcWFlhjBhsHfbwULMZLVuXD8Swfp8J-LA/exec") {
 			// 		try {
 			// 			await fetch(APPS_SCRIPT_URL, {
 			// 				method: "POST",
@@ -1003,7 +1004,14 @@
 						return;
 					}
 
-					document.getElementById("successOrderId").textContent = result.orderId;
+					const orderId = result.orderId;
+					document.getElementById("successOrderId").textContent = orderId;
+
+					const itemLines = items.map((i) => `  • ${i.nama} ×${i.qty} = Rp${i.subtotal.toLocaleString("id-ID")}`).join("\n");
+					const waMessage = `*Pesanan Baru Masuk!*\n\n` + `Order ID  : ${orderId}\n` + `Meja      : ${tableNum}\n` + `Pelanggan : ${customerName || "-"}\n\n` + `*Item:*\n${itemLines}\n\n` + `Total     : Rp${total.toLocaleString("id-ID")}\n` + `Catatan   : ${note || "-"}\n`;
+
+					window.open(`https://wa.me/6281379544107?text=${encodeURIComponent(waMessage)}`, "_blank");
+
 					cart = {};
 					updateCartCount();
 					closeCart();
