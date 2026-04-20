@@ -966,7 +966,7 @@
 				try {
 					const compressed = await compressImage(file, 800, 0.7);
 					const base64Only = compressed.split(",")[1];
-					statusEl.textContent = "Mengupload ke Google Drive...";
+					statusEl.textContent = "Mengupload...";
 					const res = await fetch(APPS_SCRIPT_URL, {
 						method: "POST",
 						headers: { "Content-Type": "text/plain" },
