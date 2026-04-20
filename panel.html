@@ -5,7 +5,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Admin — Kopi & Rasa</title>
 		<link href="assets/img/logo_link.jpg" rel="icon" />
-		<!-- <link rel="icon" href="data:," /> -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -31,12 +30,10 @@
 				--danger-bg: #fef2f2;
 				--info: #185fa5;
 				--info-bg: #eff6ff;
+				--sidebar-w: 220px;
+				--sidebar-w-sm: 60px;
 			}
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
+			* { margin: 0; padding: 0; box-sizing: border-box; }
 			body {
 				font-family: "DM Sans", sans-serif;
 				background: var(--cream);
@@ -45,30 +42,30 @@
 				min-height: 100vh;
 			}
 
-			/* SIDEBAR */
+			/* ── SIDEBAR ── */
 			.sidebar {
-				width: 220px;
+				width: var(--sidebar-w);
 				background: var(--sidebar-bg);
 				color: var(--sidebar-text);
 				display: flex;
 				flex-direction: column;
 				position: fixed;
-				top: 0;
-				left: 0;
-				bottom: 0;
+				top: 0; left: 0; bottom: 0;
 				z-index: 50;
+				transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
 			}
 			.sidebar-logo {
-				padding: 24px 20px 20px;
+				padding: 22px 20px 18px;
 				font-family: "Cormorant Garamond", serif;
 				font-size: 20px;
 				font-weight: 600;
 				border-bottom: 1px solid #2a2724;
 				color: #faf8f4;
+				display: flex;
+				align-items: flex-start;
+				justify-content: space-between;
 			}
-			.sidebar-logo span {
-				color: var(--accent);
-			}
+			.sidebar-logo span { color: var(--accent); }
 			.sidebar-role {
 				font-size: 11px;
 				color: var(--sidebar-muted);
@@ -76,9 +73,17 @@
 				font-weight: 400;
 				margin-top: 2px;
 			}
-			.nav-section {
-				padding: 16px 0 8px;
+			.sidebar-close {
+				display: none;
+				background: none;
+				border: none;
+				color: var(--sidebar-muted);
+				font-size: 20px;
+				cursor: pointer;
+				padding: 2px;
+				line-height: 1;
 			}
+			.nav-section { padding: 14px 0 6px; }
 			.nav-label {
 				font-size: 10px;
 				letter-spacing: 1px;
@@ -97,24 +102,13 @@
 				transition: all 0.15s;
 				border-left: 2px solid transparent;
 			}
-			.nav-item:hover {
-				color: var(--sidebar-text);
-				background: rgba(255, 255, 255, 0.04);
-			}
-			.nav-item.active {
-				color: var(--sidebar-text);
-				border-left-color: var(--accent);
-				background: rgba(196, 168, 130, 0.08);
-			}
-			.nav-item svg {
-				width: 16px;
-				height: 16px;
-				flex-shrink: 0;
-			}
+			.nav-item:hover { color: var(--sidebar-text); background: rgba(255,255,255,0.04); }
+			.nav-item.active { color: var(--sidebar-text); border-left-color: var(--accent); background: rgba(196,168,130,0.08); }
+			.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
 			.refresh-btn {
 				margin: auto 20px 20px;
 				padding: 8px 0;
-				background: rgba(255, 255, 255, 0.06);
+				background: rgba(255,255,255,0.06);
 				border: 1px solid #2a2724;
 				border-radius: 8px;
 				color: var(--sidebar-muted);
@@ -127,113 +121,141 @@
 				gap: 6px;
 				transition: all 0.15s;
 			}
-			.refresh-btn:hover {
-				color: var(--sidebar-text);
-			}
+			.refresh-btn:hover { color: var(--sidebar-text); }
 			.live-dot {
-				width: 6px;
-				height: 6px;
+				width: 6px; height: 6px;
 				border-radius: 50%;
 				background: var(--success);
 				animation: pulse 2s infinite;
 			}
-			@keyframes pulse {
-				0%,
-				100% {
-					opacity: 1;
-				}
-				50% {
-					opacity: 0.3;
-				}
+
+			/* ── MOBILE HEADER ── */
+			.mobile-header {
+				display: none;
+				position: sticky;
+				top: 0;
+				z-index: 40;
+				background: var(--sidebar-bg);
+				color: var(--sidebar-text);
+				padding: 0 16px;
+				height: 54px;
+				align-items: center;
+				justify-content: space-between;
+				border-bottom: 1px solid #2a2724;
+			}
+			.mobile-header-logo {
+				font-family: "Cormorant Garamond", serif;
+				font-size: 18px;
+				font-weight: 600;
+			}
+			.mobile-header-logo span { color: var(--accent); }
+			.hamburger-btn {
+				background: none;
+				border: none;
+				color: var(--sidebar-text);
+				cursor: pointer;
+				padding: 6px;
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+			}
+			.hamburger-btn span {
+				display: block;
+				width: 20px;
+				height: 2px;
+				background: currentColor;
+				border-radius: 2px;
+				transition: all 0.2s;
 			}
 
-			/* MAIN */
+			/* Sidebar overlay for mobile */
+			.sidebar-overlay {
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.5);
+				z-index: 49;
+			}
+			.sidebar-overlay.show { display: block; }
+
+			/* ── MAIN ── */
 			.main {
-				margin-left: 220px;
+				margin-left: var(--sidebar-w);
 				flex: 1;
 				min-height: 100vh;
+				min-width: 0;
+				display: flex;
+				flex-direction: column;
 			}
 			.page {
 				display: none;
-				padding: 28px 28px 48px;
+				padding: 24px 24px 48px;
+				flex: 1;
 			}
-			.page.active {
-				display: block;
-			}
-			.page-header {
-				margin-bottom: 24px;
-			}
+			.page.active { display: flex; flex-direction: column; }
+			.page-header { margin-bottom: 20px; flex-shrink: 0; }
 			.page-title {
 				font-family: "Cormorant Garamond", serif;
-				font-size: 28px;
+				font-size: 26px;
 				font-weight: 500;
 				margin-bottom: 4px;
 			}
-			.page-sub {
-				font-size: 13px;
-				color: var(--ink-muted);
-			}
+			.page-sub { font-size: 13px; color: var(--ink-muted); }
 
-			/* METRIC CARDS */
+			/* ── METRIC CARDS ── */
 			.metrics {
 				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-				gap: 12px;
-				margin-bottom: 24px;
+				grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+				gap: 10px;
+				margin-bottom: 20px;
+				flex-shrink: 0;
 			}
 			.metric-card {
 				background: var(--white);
 				border: 1px solid var(--border);
 				border-radius: 12px;
-				padding: 16px;
+				padding: 14px;
 			}
-			.metric-label {
-				font-size: 12px;
-				color: var(--ink-muted);
-				margin-bottom: 6px;
-			}
+			.metric-label { font-size: 11px; color: var(--ink-muted); margin-bottom: 5px; }
 			.metric-value {
-				font-size: 26px;
+				font-size: 24px;
 				font-weight: 500;
 				font-family: "Cormorant Garamond", serif;
 				color: var(--ink);
 			}
-			.metric-value.green {
-				color: var(--success);
-			}
-			.metric-sub {
-				font-size: 11px;
-				color: var(--ink-muted);
-				margin-top: 4px;
-			}
+			.metric-value.green { color: var(--success); }
+			.metric-sub { font-size: 11px; color: var(--ink-muted); margin-top: 3px; }
 
-			/* ORDERS TABLE */
+			/* ── PANEL ── */
 			.panel {
 				background: var(--white);
 				border: 1px solid var(--border);
 				border-radius: 12px;
 				overflow: hidden;
+				display: flex;
+				flex-direction: column;
 			}
+
+			/* Orders panel fills remaining height */
+			.orders-panel {
+				flex: 1;
+				min-height: 0;
+			}
+
 			.panel-header {
-				padding: 16px 20px;
+				padding: 14px 18px;
 				border-bottom: 1px solid var(--border);
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
 				flex-wrap: wrap;
-				gap: 10px;
-			}
-			.panel-title {
-				font-size: 15px;
-				font-weight: 500;
-			}
-			.filter-row {
-				display: flex;
 				gap: 8px;
-				flex-wrap: wrap;
+				flex-shrink: 0;
 			}
+			.panel-title { font-size: 14px; font-weight: 500; }
+			.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
 			.filter-btn {
-				padding: 5px 14px;
+				padding: 4px 12px;
 				border-radius: 20px;
 				border: 1px solid var(--border);
 				background: transparent;
@@ -243,153 +265,118 @@
 				cursor: pointer;
 				transition: all 0.15s;
 			}
-			.filter-btn:hover {
-				border-color: var(--accent);
+			.filter-btn:hover { border-color: var(--accent); }
+			.filter-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+			/* ── SCROLLABLE TABLE ── */
+			.table-scroll {
+				overflow-y: auto;
+				overflow-x: auto;
+				flex: 1;
+				/* Max height for standalone use; overridden by flex in orders-panel */
 			}
-			.filter-btn.active {
-				background: var(--ink);
-				color: #fff;
-				border-color: var(--ink);
+			.orders-panel .table-scroll {
+				flex: 1;
+				min-height: 0;
 			}
 
 			table {
 				width: 100%;
 				border-collapse: collapse;
 				font-size: 13px;
+				min-width: 640px;
 			}
 			thead tr {
 				border-bottom: 1px solid var(--border);
+				position: sticky;
+				top: 0;
+				background: var(--white);
+				z-index: 1;
 			}
 			th {
-				padding: 12px 20px;
+				padding: 10px 16px;
 				text-align: left;
 				font-weight: 500;
 				color: var(--ink-muted);
-				font-size: 12px;
+				font-size: 11px;
 				letter-spacing: 0.3px;
+				white-space: nowrap;
 			}
 			td {
-				padding: 14px 20px;
+				padding: 12px 16px;
 				vertical-align: middle;
 				border-bottom: 1px solid var(--border-light);
 			}
-			tr:last-child td {
-				border-bottom: none;
-			}
-			tr:hover td {
-				background: var(--cream);
-			}
+			tr:last-child td { border-bottom: none; }
+			tr:hover td { background: var(--cream); }
 
 			.order-id {
 				font-weight: 500;
 				font-family: "Cormorant Garamond", serif;
-				font-size: 16px;
+				font-size: 15px;
+				white-space: nowrap;
 			}
 			.meja-badge {
 				background: var(--border-light);
-				padding: 3px 10px;
+				padding: 3px 9px;
 				border-radius: 4px;
 				font-weight: 500;
-				font-size: 12px;
+				font-size: 11px;
+				white-space: nowrap;
 			}
-
 			.status-pill {
 				display: inline-flex;
 				align-items: center;
 				gap: 5px;
-				padding: 4px 10px;
+				padding: 4px 9px;
 				border-radius: 20px;
 				font-size: 11px;
 				font-weight: 500;
 				white-space: nowrap;
 			}
-			.pill-dot {
-				width: 6px;
-				height: 6px;
-				border-radius: 50%;
-			}
-			.status-baru {
-				background: var(--info-bg);
-				color: var(--info);
-			}
-			.status-baru .pill-dot {
-				background: var(--info);
-				animation: pulse 1.5s infinite;
-			}
-			.status-proses {
-				background: var(--warning-bg);
-				color: var(--warning);
-			}
-			.status-proses .pill-dot {
-				background: var(--warning);
-			}
-			.status-selesai {
-				background: var(--success-bg);
-				color: var(--success);
-			}
-			.status-selesai .pill-dot {
-				background: var(--success);
-			}
-			.status-batal {
-				background: var(--danger-bg);
-				color: var(--danger);
-			}
-			.status-batal .pill-dot {
-				background: var(--danger);
-			}
+			.pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+			.status-baru { background: var(--info-bg); color: var(--info); }
+			.status-baru .pill-dot { background: var(--info); animation: pulse 1.5s infinite; }
+			.status-proses { background: var(--warning-bg); color: var(--warning); }
+			.status-proses .pill-dot { background: var(--warning); }
+			.status-selesai { background: var(--success-bg); color: var(--success); }
+			.status-selesai .pill-dot { background: var(--success); }
+			.status-batal { background: var(--danger-bg); color: var(--danger); }
+			.status-batal .pill-dot { background: var(--danger); }
 
 			.action-select {
-				padding: 5px 10px;
+				padding: 5px 8px;
 				border: 1px solid var(--border);
 				border-radius: 6px;
 				font-family: "DM Sans", sans-serif;
-				font-size: 12px;
+				font-size: 11px;
 				color: var(--ink);
 				background: var(--white);
 				cursor: pointer;
 				outline: none;
 			}
-			.action-select:focus {
-				border-color: var(--accent);
-			}
-
-			.items-cell {
-				max-width: 200px;
-			}
+			.action-select:focus { border-color: var(--accent); }
+			.items-cell { max-width: 180px; }
 			.item-chip {
 				display: inline-block;
 				background: var(--border-light);
-				padding: 2px 8px;
+				padding: 2px 7px;
 				border-radius: 4px;
 				margin: 2px;
 				font-size: 11px;
 			}
 
-			/* MENU MANAGEMENT */
+			/* ── MENU MANAGEMENT ── */
 			.menu-mgmt-grid {
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				gap: 16px;
-				margin-bottom: 24px;
 			}
-			@media (max-width: 700px) {
-				.menu-mgmt-grid {
-					grid-template-columns: 1fr;
-				}
-			}
-
-			.form-group {
-				margin-bottom: 14px;
-			}
-			.form-label {
-				font-size: 13px;
-				color: var(--ink-soft);
-				display: block;
-				margin-bottom: 5px;
-			}
+			.form-group { margin-bottom: 13px; }
+			.form-label { font-size: 13px; color: var(--ink-soft); display: block; margin-bottom: 5px; }
 			.form-input {
 				width: 100%;
-				padding: 8px 12px;
+				padding: 8px 11px;
 				border: 1px solid var(--border);
 				border-radius: 8px;
 				font-family: "DM Sans", sans-serif;
@@ -399,31 +386,18 @@
 				outline: none;
 				transition: border-color 0.15s;
 			}
-			.form-input:focus {
-				border-color: var(--accent);
-			}
+			.form-input:focus { border-color: var(--accent); }
 			.form-select {
 				appearance: none;
 				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239A9390' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 				background-repeat: no-repeat;
 				background-position: right 10px center;
 			}
-			.toggle-wrap {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-			}
-			.toggle {
-				position: relative;
-				width: 36px;
-				height: 20px;
-			}
-			.toggle input {
-				display: none;
-			}
+			.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+			.toggle { position: relative; width: 36px; height: 20px; }
+			.toggle input { display: none; }
 			.toggle-slider {
-				position: absolute;
-				inset: 0;
+				position: absolute; inset: 0;
 				border-radius: 10px;
 				background: var(--border);
 				cursor: pointer;
@@ -432,107 +406,66 @@
 			.toggle-slider::after {
 				content: "";
 				position: absolute;
-				width: 14px;
-				height: 14px;
+				width: 14px; height: 14px;
 				background: #fff;
 				border-radius: 50%;
-				top: 3px;
-				left: 3px;
+				top: 3px; left: 3px;
 				transition: transform 0.2s;
 			}
-			.toggle input:checked + .toggle-slider {
-				background: var(--success);
-			}
-			.toggle input:checked + .toggle-slider::after {
-				transform: translateX(16px);
-			}
-
+			.toggle input:checked + .toggle-slider { background: var(--success); }
+			.toggle input:checked + .toggle-slider::after { transform: translateX(16px); }
 			.save-btn {
 				background: var(--ink);
 				color: #fff;
 				border: none;
-				padding: 10px 24px;
+				padding: 9px 20px;
 				border-radius: 8px;
 				font-family: "DM Sans", sans-serif;
-				font-size: 14px;
+				font-size: 13px;
 				cursor: pointer;
 				transition: opacity 0.15s;
 			}
-			.save-btn:hover {
-				opacity: 0.85;
-			}
-			.danger-btn {
-				background: var(--danger);
-			}
+			.save-btn:hover { opacity: 0.85; }
 
 			.menu-list-item {
 				display: flex;
 				align-items: center;
-				gap: 12px;
-				padding: 12px 20px;
+				gap: 10px;
+				padding: 11px 18px;
 				border-bottom: 1px solid var(--border-light);
 			}
-			.menu-list-item:last-child {
-				border-bottom: none;
-			}
+			.menu-list-item:last-child { border-bottom: none; }
 			.menu-item-icon {
-				width: 36px;
-				height: 36px;
+				width: 34px; height: 34px;
 				border-radius: 8px;
 				background: var(--border-light);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 18px;
+				display: flex; align-items: center; justify-content: center;
+				font-size: 17px;
 				flex-shrink: 0;
 			}
-			.menu-item-info {
-				flex: 1;
-			}
-			.menu-item-name {
-				font-size: 14px;
-				font-weight: 500;
-			}
-			.menu-item-meta {
-				font-size: 12px;
-				color: var(--ink-muted);
-			}
-			.menu-item-price {
-				font-size: 14px;
-				font-weight: 500;
-				color: var(--ink);
-				margin-right: 12px;
-			}
+			.menu-item-info { flex: 1; min-width: 0; }
+			.menu-item-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+			.menu-item-meta { font-size: 11px; color: var(--ink-muted); }
+			.menu-item-price { font-size: 13px; font-weight: 500; color: var(--ink); margin-right: 8px; white-space: nowrap; }
 			.edit-icon {
-				background: none;
-				border: none;
+				background: none; border: none;
 				cursor: pointer;
 				color: var(--ink-muted);
 				padding: 4px;
 				font-size: 14px;
 				transition: color 0.15s;
+				flex-shrink: 0;
 			}
-			.edit-icon:hover {
-				color: var(--ink);
-			}
+			.edit-icon:hover { color: var(--ink); }
 
-			/* CHART */
-			.chart-wrap {
-				padding: 20px;
-				height: 260px;
-				position: relative;
-			}
+			/* ── CHART ── */
+			.chart-wrap { padding: 16px; height: 240px; position: relative; }
 
-			/* LAPORAN */
+			/* ── LAPORAN ── */
 			.report-grid {
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				gap: 16px;
-			}
-			@media (max-width: 700px) {
-				.report-grid {
-					grid-template-columns: 1fr;
-				}
 			}
 
 			.loading-row td {
@@ -542,79 +475,104 @@
 				font-size: 13px;
 			}
 
-			/* NOTIF */
+			/* ── NOTIF ── */
 			.notif {
 				position: fixed;
-				top: 20px;
-				right: 20px;
+				top: 16px; right: 16px;
 				z-index: 999;
 				background: var(--ink);
 				color: #fff;
-				padding: 12px 18px;
+				padding: 11px 16px;
 				border-radius: 10px;
 				font-size: 13px;
 				opacity: 0;
 				transform: translateY(-10px);
 				transition: all 0.2s;
 				pointer-events: none;
+				max-width: calc(100vw - 32px);
 			}
-			.notif.show {
-				opacity: 1;
-				transform: translateY(0);
+			.notif.show { opacity: 1; transform: translateY(0); }
+
+			@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+			/* ── RESPONSIVE ── */
+
+			/* Large desktop */
+			@media (min-width: 1200px) {
+				.metrics { grid-template-columns: repeat(4, 1fr); }
 			}
 
+			/* Tablet landscape */
+			@media (max-width: 1024px) {
+				:root { --sidebar-w: 180px; }
+				.page { padding: 20px 20px 40px; }
+				.report-grid { grid-template-columns: 1fr; }
+			}
+
+			/* Tablet portrait */
 			@media (max-width: 768px) {
 				.sidebar {
-					width: 60px;
+					transform: translateX(-100%);
+					width: 240px;
+					z-index: 51;
 				}
-				.sidebar-logo,
-				.nav-label,
-				.nav-item span,
-				.sidebar-role,
-				.refresh-btn span {
-					display: none;
-				}
-				.nav-item {
-					justify-content: center;
-					padding: 14px;
-				}
-				.main {
-					margin-left: 60px;
-				}
-				.page {
-					padding: 20px;
-				}
+				.sidebar.open { transform: translateX(0); }
+				.sidebar-close { display: block; }
+				.mobile-header { display: flex; }
+				.main { margin-left: 0; }
+				.page { padding: 16px 16px 40px; }
+				.menu-mgmt-grid { grid-template-columns: 1fr; }
+				.report-grid { grid-template-columns: 1fr; }
+				.metrics { grid-template-columns: repeat(2, 1fr); }
+			}
+
+			/* Mobile */
+			@media (max-width: 480px) {
+				.metrics { grid-template-columns: repeat(2, 1fr); }
+				.metric-value { font-size: 20px; }
+				.panel-header { flex-direction: column; align-items: flex-start; }
+				.page { padding: 12px 12px 40px; }
+				.chart-wrap { height: 200px; }
 			}
 		</style>
 	</head>
 	<body>
-		<!-- NOTIF -->
 		<div class="notif" id="notif"></div>
 
+		<!-- SIDEBAR OVERLAY (mobile) -->
+		<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 		<!-- SIDEBAR -->
-		<aside class="sidebar">
+		<aside class="sidebar" id="sidebar">
 			<div class="sidebar-logo">
-				Kopi <span>&</span> Rasa
-				<div class="sidebar-role">Admin Panel</div>
+				<div>
+					Kopi <span>&</span> Rasa
+					<div class="sidebar-role">Admin Panel</div>
+				</div>
+				<button class="sidebar-close" onclick="closeSidebar()">&#215;</button>
 			</div>
 			<div class="nav-section">
 				<div class="nav-label">Operasional</div>
 				<div class="nav-item active" onclick="showPage('orders', this)">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
-						<rect x="9" y="3" width="6" height="4" rx="1" />
+						<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+						<rect x="9" y="3" width="6" height="4" rx="1"/>
 					</svg>
 					<span>Pesanan Masuk</span>
 				</div>
 				<div class="nav-item" onclick="showPage('menu', this)">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+					</svg>
 					<span>Kelola Menu</span>
 				</div>
 			</div>
 			<div class="nav-section">
 				<div class="nav-label">Analitik</div>
 				<div class="nav-item" onclick="showPage('laporan', this)">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+					</svg>
 					<span>Laporan</span>
 				</div>
 			</div>
@@ -624,8 +582,17 @@
 			</button>
 		</aside>
 
+		<!-- MOBILE HEADER -->
+		<div class="mobile-header" id="mobileHeader">
+			<div class="mobile-header-logo">Kopi <span>&</span> Rasa</div>
+			<button class="hamburger-btn" onclick="openSidebar()">
+				<span></span><span></span><span></span>
+			</button>
+		</div>
+
 		<!-- MAIN -->
 		<main class="main">
+
 			<!-- ORDERS PAGE -->
 			<div class="page active" id="page-orders">
 				<div class="page-header">
@@ -654,7 +621,7 @@
 						<div class="metric-sub">Dari pesanan selesai</div>
 					</div>
 				</div>
-				<div class="panel">
+				<div class="panel orders-panel">
 					<div class="panel-header">
 						<span class="panel-title">Daftar Pesanan</span>
 						<div class="filter-row">
@@ -664,13 +631,15 @@
 							<button class="filter-btn" onclick="filterOrders('Selesai', this)">Selesai</button>
 						</div>
 					</div>
-					<div style="overflow-x: auto">
+					<div class="table-scroll">
 						<table>
 							<thead>
 								<tr>
 									<th>#</th>
 									<th>Meja</th>
 									<th>Pelanggan</th>
+									<th>WA</th>
+									<th>Type</th>
 									<th>Item Pesanan</th>
 									<th>Total</th>
 									<th>Waktu</th>
@@ -679,9 +648,7 @@
 								</tr>
 							</thead>
 							<tbody id="ordersTableBody">
-								<tr>
-									<td colspan="8" class="loading-row">Memuat pesanan...</td>
-								</tr>
+								<tr><td colspan="10" class="loading-row">Memuat pesanan...</td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -697,7 +664,7 @@
 				<div class="menu-mgmt-grid">
 					<div class="panel">
 						<div class="panel-header"><span class="panel-title">Tambah / Edit Item</span></div>
-						<div style="padding: 20px">
+						<div style="padding:18px">
 							<input type="hidden" id="editId" />
 							<div class="form-group">
 								<label class="form-label">Nama Item</label>
@@ -720,43 +687,38 @@
 								<label class="form-label">Deskripsi</label>
 								<input type="text" class="form-input" id="fDeskripsi" placeholder="Deskripsi singkat menu" />
 							</div>
-							<!-- <div class="form-group">
-								<label class="form-label">URL Foto (opsional)</label>
-								<input type="text" class="form-input" id="fFoto" placeholder="https://..." />
-							</div> -->
 							<div class="form-group">
 								<label class="form-label">Foto (opsional)</label>
-								<!-- Preview foto -->
-								<div id="fotoPreview" style="width: 100%; height: 140px; border-radius: 8px; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; overflow: hidden; background: var(--cream); font-size: 13px; color: var(--ink-muted)">Belum ada foto</div>
-								<!-- Input file -->
-								<input type="file" id="fFotoFile" accept="image/*" style="display: none" onchange="previewFoto(this)" />
-								<!-- Input URL tersembunyi, diisi otomatis setelah upload -->
+								<div id="fotoPreview" style="width:100%;height:130px;border-radius:8px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:8px;overflow:hidden;background:var(--cream);font-size:13px;color:var(--ink-muted)">Belum ada foto</div>
+								<input type="file" id="fFotoFile" accept="image/*" style="display:none" onchange="previewFoto(this)" />
 								<input type="hidden" id="fFoto" />
-								<div style="display: flex; gap: 8px">
-									<button type="button" class="save-btn" style="background: var(--accent-dark); font-size: 13px; padding: 8px 16px" onclick="document.getElementById('fFotoFile').click()">Pilih Foto</button>
-									<button type="button" class="save-btn" id="uploadFotoBtn" style="background: var(--success); font-size: 13px; padding: 8px 16px; display: none" onclick="uploadFoto()">Upload</button>
-									<button type="button" class="save-btn" style="background: transparent; color: var(--ink-muted); border: 1px solid var(--border); font-size: 13px; padding: 8px 16px" onclick="hapusFoto()">🗑️ Hapus Foto</button>
+								<div style="display:flex;gap:8px;flex-wrap:wrap">
+									<button type="button" class="save-btn" style="background:var(--accent-dark);font-size:12px;padding:7px 14px" onclick="document.getElementById('fFotoFile').click()">📁 Pilih Foto</button>
+									<button type="button" class="save-btn" id="uploadFotoBtn" style="background:var(--success);font-size:12px;padding:7px 14px;display:none" onclick="uploadFoto()">☁️ Upload</button>
+									<button type="button" class="save-btn" style="background:transparent;color:var(--ink-muted);border:1px solid var(--border);font-size:12px;padding:7px 14px" onclick="hapusFoto()">🗑️ Hapus</button>
 								</div>
-								<div id="uploadStatus" style="font-size: 12px; color: var(--ink-muted); margin-top: 6px"></div>
+								<div id="uploadStatus" style="font-size:12px;color:var(--ink-muted);margin-top:6px"></div>
 							</div>
 							<div class="form-group">
 								<div class="toggle-wrap">
-									<label class="toggle"
-										><input type="checkbox" id="fTersedia" checked />
-										<div class="toggle-slider"></div
-									></label>
-									<span class="form-label" style="margin: 0">Tersedia / Aktif</span>
+									<label class="toggle">
+										<input type="checkbox" id="fTersedia" checked />
+										<div class="toggle-slider"></div>
+									</label>
+									<span class="form-label" style="margin:0">Tersedia / Aktif</span>
 								</div>
 							</div>
-							<div style="display: flex; gap: 8px; flex-wrap: wrap">
+							<div style="display:flex;gap:8px;flex-wrap:wrap">
 								<button class="save-btn" onclick="saveMenu()">Simpan Item</button>
-								<button class="save-btn" style="background: transparent; color: var(--ink); border: 1px solid var(--border)" onclick="clearForm()">Reset Form</button>
+								<button class="save-btn" style="background:transparent;color:var(--ink);border:1px solid var(--border)" onclick="clearForm()">Reset</button>
 							</div>
 						</div>
 					</div>
 					<div class="panel">
 						<div class="panel-header"><span class="panel-title">Daftar Menu</span></div>
-						<div id="menuListContainer"><div style="padding: 2rem; text-align: center; color: var(--ink-muted); font-size: 13px">Memuat...</div></div>
+						<div id="menuListContainer" style="overflow-y:auto;max-height:520px">
+							<div style="padding:2rem;text-align:center;color:var(--ink-muted);font-size:13px">Memuat...</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -767,7 +729,7 @@
 					<div class="page-title">Laporan Penjualan</div>
 					<div class="page-sub">Rekap omzet dan item terlaris</div>
 				</div>
-				<div class="metrics" style="margin-bottom: 24px">
+				<div class="metrics" style="margin-bottom:20px">
 					<div class="metric-card">
 						<div class="metric-label">Total omzet bulan ini</div>
 						<div class="metric-value green" id="r-omzet">—</div>
@@ -782,7 +744,7 @@
 					</div>
 					<div class="metric-card">
 						<div class="metric-label">Item terlaris</div>
-						<div class="metric-value" id="r-terlaris" style="font-size: 16px">—</div>
+						<div class="metric-value" id="r-terlaris" style="font-size:15px">—</div>
 					</div>
 				</div>
 				<div class="report-grid">
@@ -792,122 +754,65 @@
 					</div>
 					<div class="panel">
 						<div class="panel-header"><span class="panel-title">Item Terlaris</span></div>
-						<div style="overflow-x: auto">
+						<div class="table-scroll" style="max-height:260px">
 							<table>
 								<thead>
 									<tr>
 										<th>Item</th>
-										<th>Qty Terjual</th>
+										<th>Qty</th>
 										<th>Total</th>
 									</tr>
 								</thead>
 								<tbody id="topItemsTable">
-									<tr>
-										<td colspan="3" class="loading-row">Memuat...</td>
-									</tr>
+									<tr><td colspan="3" class="loading-row">Memuat...</td></tr>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 			</div>
+
 		</main>
 
 		<script>
-			// =============================================
-			// KONFIGURASI — GANTI DENGAN URL APPS SCRIPT KAMU
-			// =============================================
-			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5cNKjKQ-z7Q4CBPcOhg5PiMTtzYGh_snUr5yNG1-5Y5EOz-fAsjfT9L_CgQPa_4PV/exec";
-			// =============================================
+			const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrUnU-09ZVNoddDZe6dpWNJuJCLQPDiPVmt8d16RDZvaozjG5UZJ_EzWp6E-wfBtmg/exec";
 
 			let allOrders = [];
 			let allMenu = [];
 			let currentFilter = "semua";
 			let revenueChart = null;
 
-			// DEMO DATA
-			const DEMO_ORDERS = [
-				{
-					id: "#2401",
-					nomorMeja: "3",
-					namaPelanggan: "Rina",
-					items: [
-						{ nama: "Kopi Susu", qty: 2, subtotal: 56000 },
-						{ nama: "Croissant Keju", qty: 1, subtotal: 22000 },
-					],
-					total: 78000,
-					waktu: "09:14",
-					status: "Baru",
-					catatan: "",
-				},
-				{ id: "#2400", nomorMeja: "7", namaPelanggan: "Budi", items: [{ nama: "Matcha Latte", qty: 1, subtotal: 32000 }], total: 32000, waktu: "09:02", status: "Diproses", catatan: "Less sugar" },
-				{
-					id: "#2399",
-					nomorMeja: "1",
-					namaPelanggan: "Sari",
-					items: [
-						{ nama: "Cold Brew", qty: 2, subtotal: 70000 },
-						{ nama: "Tiramisu", qty: 1, subtotal: 38000 },
-					],
-					total: 108000,
-					waktu: "08:45",
-					status: "Selesai",
-					catatan: "",
-				},
-				{ id: "#2398", nomorMeja: "5", namaPelanggan: "Doni", items: [{ nama: "Es Teh Tarik", qty: 3, subtotal: 54000 }], total: 54000, waktu: "08:30", status: "Selesai", catatan: "" },
-				{
-					id: "#2397",
-					nomorMeja: "2",
-					namaPelanggan: "Maya",
-					items: [
-						{ nama: "Roti Bakar Avocado", qty: 1, subtotal: 35000 },
-						{ nama: "Kopi Susu", qty: 1, subtotal: 28000 },
-					],
-					total: 63000,
-					waktu: "08:15",
-					status: "Selesai",
-					catatan: "",
-				},
-			];
-			const DEMO_MENU = [
-				{ id: "1", nama: "Kopi Susu", kategori: "Minuman", harga: 28000, deskripsi: "Espresso dengan susu segar pilihan", tersedia: true },
-				{ id: "2", nama: "Matcha Latte", kategori: "Minuman", harga: 32000, deskripsi: "Matcha premium dengan susu oat", tersedia: true },
-				{ id: "3", nama: "Es Teh Tarik", kategori: "Minuman", harga: 18000, deskripsi: "Teh tarik segar dengan es batu", tersedia: true },
-				{ id: "4", nama: "Cold Brew", kategori: "Minuman", harga: 35000, deskripsi: "Kopi cold brew 12 jam brewing", tersedia: true },
-				{ id: "5", nama: "Croissant Keju", kategori: "Makanan", harga: 22000, deskripsi: "Croissant butter dengan keju mozarella", tersedia: true },
-				{ id: "6", nama: "Roti Bakar Avocado", kategori: "Makanan", harga: 35000, deskripsi: "Sourdough dengan avocado cream & telur", tersedia: true },
-				{ id: "7", nama: "Sandwich Tuna", kategori: "Makanan", harga: 30000, deskripsi: "Tuna mayo dengan sayuran segar", tersedia: false },
-				{ id: "8", nama: "Tiramisu", kategori: "Dessert", harga: 38000, deskripsi: "Tiramisu klasik dengan kopi espresso", tersedia: true },
-			];
 			const CAT_ICONS = { Minuman: "☕", Makanan: "🍽", Dessert: "🍮", Snack: "🥨" };
 
-			// ASLI
-			// async function loadAllData() {
-			// 	if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbw5cNKjKQ-z7Q4CBPcOhg5PiMTtzYGh_snUr5yNG1-5Y5EOz-fAsjfT9L_CgQPa_4PV/exec") {
-			// 		allOrders = DEMO_ORDERS;
-			// 		allMenu = DEMO_MENU;
-			// 	} else {
-			// 		try {
-			// 			const [ordRes, menuRes] = await Promise.all([fetch(`${APPS_SCRIPT_URL}?action=getOrders`), fetch(`${APPS_SCRIPT_URL}?action=getMenu`)]);
-			// 			const od = await ordRes.json();
-			// 			const md = await menuRes.json();
-			// 			allOrders = od.orders || [];
-			// 			allMenu = md.menu || [];
-			// 		} catch (e) {
-			// 			allOrders = DEMO_ORDERS;
-			// 			allMenu = DEMO_MENU;
-			// 		}
-			// 	}
-			// 	renderOrders();
-			// 	renderMenuList();
-			// 	renderReport();
-			// 	document.getElementById("lastRefresh").textContent = `Diperbarui: ${new Date().toLocaleTimeString("id-ID")}`;
-			// }
+			// ── SIDEBAR MOBILE ─────────────────────────────────────
+			function openSidebar() {
+				document.getElementById("sidebar").classList.add("open");
+				document.getElementById("sidebarOverlay").classList.add("show");
+			}
+			function closeSidebar() {
+				document.getElementById("sidebar").classList.remove("open");
+				document.getElementById("sidebarOverlay").classList.remove("show");
+			}
 
-			// DEVELOPMENT
+			// ── ORDERS PAGE HEIGHT ─────────────────────────────────
+			function setOrdersHeight() {
+				const page = document.getElementById("page-orders");
+				if (!page.classList.contains("active")) return;
+				const mobileHeader = document.getElementById("mobileHeader");
+				const mobileH = mobileHeader.offsetHeight || 0;
+				const vh = window.innerHeight - mobileH;
+				page.style.height = vh + "px";
+				page.style.maxHeight = vh + "px";
+			}
+			window.addEventListener("resize", setOrdersHeight);
+
+			// ── LOAD DATA ──────────────────────────────────────────
 			async function loadAllData() {
 				try {
-					const [ordRes, menuRes] = await Promise.all([fetch(`${APPS_SCRIPT_URL}?action=getOrders`), fetch(`${APPS_SCRIPT_URL}?action=getMenu`)]);
+					const [ordRes, menuRes] = await Promise.all([
+						fetch(`${APPS_SCRIPT_URL}?action=getOrders`),
+						fetch(`${APPS_SCRIPT_URL}?action=getMenu`)
+					]);
 					const od = await ordRes.json();
 					const md = await menuRes.json();
 					allOrders = od.orders || [];
@@ -923,303 +828,176 @@
 				document.getElementById("lastRefresh").textContent = `Diperbarui: ${new Date().toLocaleTimeString("id-ID")}`;
 			}
 
-			// ========== ORDERS ==========
+			// ── ORDERS ─────────────────────────────────────────────
 			function filterOrders(status, btn) {
 				currentFilter = status;
-				document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+				document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
 				btn.classList.add("active");
 				renderOrders();
 			}
 
 			function renderOrders() {
-				const filtered = currentFilter === "semua" ? allOrders : allOrders.filter((o) => o.status === currentFilter);
-				const baru = allOrders.filter((o) => o.status === "Baru").length;
-				const proses = allOrders.filter((o) => o.status === "Diproses").length;
-				const selesai = allOrders.filter((o) => o.status === "Selesai").length;
-				const omzet = allOrders.filter((o) => o.status === "Selesai").reduce((s, o) => s + (o.total || 0), 0);
-				document.getElementById("m-baru").textContent = baru;
-				document.getElementById("m-proses").textContent = proses;
+				const filtered = currentFilter === "semua" ? allOrders : allOrders.filter(o => o.status === currentFilter);
+				const baru    = allOrders.filter(o => o.status === "Baru").length;
+				const proses  = allOrders.filter(o => o.status === "Diproses").length;
+				const selesai = allOrders.filter(o => o.status === "Selesai").length;
+				const omzet   = allOrders.filter(o => o.status === "Selesai").reduce((s, o) => s + (o.total || 0), 0);
+				document.getElementById("m-baru").textContent    = baru;
+				document.getElementById("m-proses").textContent  = proses;
 				document.getElementById("m-selesai").textContent = selesai;
-				document.getElementById("m-omzet").textContent = "Rp " + omzet.toLocaleString("id-ID");
+				document.getElementById("m-omzet").textContent   = "Rp " + omzet.toLocaleString("id-ID");
 
 				const tbody = document.getElementById("ordersTableBody");
 				if (!filtered.length) {
-					tbody.innerHTML = '<tr><td colspan="8" class="loading-row">Tidak ada pesanan</td></tr>';
+					tbody.innerHTML = '<tr><td colspan="10" class="loading-row">Tidak ada pesanan</td></tr>';
 					return;
 				}
-				tbody.innerHTML = filtered
-					.map((o) => {
-						const statusClass = { Baru: "status-baru", Diproses: "status-proses", Selesai: "status-selesai", Batal: "status-batal" }[o.status] || "status-baru";
-						const items = (o.items || []).map((i) => `<span class="item-chip">${i.nama} ×${i.qty}</span>`).join("");
-						return `<tr>
-        <td class="order-id">${o.id}</td>
-        <td><span class="meja-badge">Meja ${o.nomorMeja}</span></td>
-        <td>${o.namaPelanggan || "—"}</td>
-        <td class="items-cell">${items}${o.catatan ? `<div style="font-size:11px;color:var(--ink-muted);margin-top:4px;">📝 ${o.catatan}</div>` : ""}</td>
-        <td style="font-weight:500;">Rp ${(o.total || 0).toLocaleString("id-ID")}</td>
-        <td style="color:var(--ink-muted);white-space:nowrap;">${o.waktu}</td>
-        <td><span class="status-pill ${statusClass}"><span class="pill-dot"></span>${o.status}</span></td>
-        <td>
-          <select class="action-select" onchange="updateStatus('${o.id}', this.value)">
-            <option value="">Ubah status</option>
-            <option value="Baru">Baru</option>
-            <option value="Diproses">Diproses</option>
-            <option value="Selesai">Selesai</option>
-            <option value="Batal">Batal</option>
-          </select>
-        </td>
-      </tr>`;
-					})
-					.join("");
+				tbody.innerHTML = filtered.map(o => {
+					const statusClass = { Baru:"status-baru", Diproses:"status-proses", Selesai:"status-selesai", Batal:"status-batal" }[o.status] || "status-baru";
+					const items = (o.items || []).map(i => `<span class="item-chip">${i.nama} ×${i.qty}</span>`).join("");
+					return `<tr>
+						<td class="order-id">${o.id}</td>
+						<td><span class="meja-badge">${o.nomorMeja}</span></td>
+						<td>${o.namaPelanggan || "—"}</td>
+						<td style="color:var(--ink-muted);font-size:12px;">${o.noWhatsapp || "—"}</td>
+						<td>
+							<span style="
+								font-size:11px;
+								padding:3px 8px;
+								border-radius:20px;
+								background:${o.tipeLayanan === 'Take Away' ? 'var(--border-light)' : 'var(--info-bg)'};
+								color:${o.tipeLayanan === 'Take Away' ? 'var(--ink-muted)' : 'var(--info)'};
+								white-space:nowrap;
+							">${o.tipeLayanan || "—"}</span>
+						</td>
+						<td class="items-cell">${items}${o.catatan ? `<div style="font-size:11px;color:var(--ink-muted);margin-top:3px;">📝 ${o.catatan}</div>` : ""}</td>
+						<td style="font-weight:500;white-space:nowrap;">Rp ${(o.total||0).toLocaleString("id-ID")}</td>
+						<td style="color:var(--ink-muted);white-space:nowrap;">${o.waktu}</td>
+						<td><span class="status-pill ${statusClass}"><span class="pill-dot"></span>${o.status}</span></td>
+						<td>
+							<select class="action-select" onchange="updateStatus('${o.id}', this.value)">
+								<option value="">Ubah</option>
+								<option value="Baru">Baru</option>
+								<option value="Diproses">Diproses</option>
+								<option value="Selesai">Selesai</option>
+								<option value="Batal">Batal</option>
+							</select>
+						</td>
+					</tr>`;
+				}).join("");
 			}
 
-			// ASLI
-			// async function updateStatus(orderId, newStatus) {
-			// 	if (!newStatus) return;
-			// 	const order = allOrders.find((o) => o.id === orderId);
-			// 	if (order) order.status = newStatus;
-			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbw5cNKjKQ-z7Q4CBPcOhg5PiMTtzYGh_snUr5yNG1-5Y5EOz-fAsjfT9L_CgQPa_4PV/exec") {
-			// 		fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "updateStatus", orderId, status: newStatus }) }).catch(() => {});
-			// 	}
-			// 	renderOrders();
-			// 	showNotif(`Status ${orderId} diubah ke "${newStatus}"`);
-			// }
-
-			// DEVELOPMENT
 			async function updateStatus(orderId, newStatus) {
 				if (!newStatus) return;
-				const order = allOrders.find((o) => o.id === orderId);
+				const order = allOrders.find(o => o.id === orderId);
 				if (order) order.status = newStatus;
-
-				// Ganti POST → GET params
-				const params = new URLSearchParams({
-					action: "updateStatus",
-					orderId: orderId,
-					status: newStatus,
-				});
-
-				try {
-					await fetch(`${APPS_SCRIPT_URL}?${params}`);
-				} catch (e) {
-					console.log("Gagal sync status:", e);
-				}
-
+				const params = new URLSearchParams({ action: "updateStatus", orderId, status: newStatus });
+				try { await fetch(`${APPS_SCRIPT_URL}?${params}`); } catch(e) { console.log(e); }
 				renderOrders();
-				showNotif(`Status ${orderId} diubah ke "${newStatus}"`);
+				showNotif(`Status ${orderId} → "${newStatus}"`);
 			}
 
-			// ========== MENU ==========
+			// ── MENU ───────────────────────────────────────────────
 			function renderMenuList() {
 				const container = document.getElementById("menuListContainer");
 				if (!allMenu.length) {
 					container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--ink-muted);font-size:13px;">Belum ada menu</div>';
 					return;
 				}
-				container.innerHTML = allMenu
-					.map(
-						(item) => `
-      <div class="menu-list-item">
-        <div class="menu-item-icon">${CAT_ICONS[item.kategori] || "•"}</div>
-        <div class="menu-item-info">
-          <div class="menu-item-name">${item.nama}</div>
-          <div class="menu-item-meta">${item.kategori} · ${item.tersedia ? '<span style="color:var(--success)">Tersedia</span>' : '<span style="color:var(--danger)">Habis</span>'}</div>
-        </div>
-        <span class="menu-item-price">Rp ${(item.harga || 0).toLocaleString("id-ID")}</span>
-        <button class="edit-icon" onclick="editMenu('${item.id}')" title="Edit">✏️</button>
-		<button class="edit-icon" onclick="confirmDeleteMenu('${item.id}', '${item.nama}')" title="Hapus" style="color:var(--danger)">🗑️</button>
-      </div>`,
-					)
-					.join("");
+				container.innerHTML = allMenu.map(item => `
+					<div class="menu-list-item">
+						<div class="menu-item-icon">${CAT_ICONS[item.kategori] || "•"}</div>
+						<div class="menu-item-info">
+							<div class="menu-item-name">${item.nama}</div>
+							<div class="menu-item-meta">${item.kategori} · ${item.tersedia ? '<span style="color:var(--success)">Tersedia</span>' : '<span style="color:var(--danger)">Habis</span>'}</div>
+						</div>
+						<span class="menu-item-price">Rp ${(item.harga||0).toLocaleString("id-ID")}</span>
+						<button class="edit-icon" onclick="editMenu('${item.id}')" title="Edit">✏️</button>
+						<button class="edit-icon" onclick="confirmDeleteMenu('${item.id}', '${item.nama}')" title="Hapus" style="color:var(--danger)">🗑️</button>
+					</div>`).join("");
 			}
 
-			// ASLI
-			// function editMenu(id) {
-			// 	const item = allMenu.find((m) => m.id === id);
-			// 	if (!item) return;
-			// 	document.getElementById("editId").value = id;
-			// 	document.getElementById("fNama").value = item.nama;
-			// 	document.getElementById("fKategori").value = item.kategori;
-			// 	document.getElementById("fHarga").value = item.harga;
-			// 	document.getElementById("fDeskripsi").value = item.deskripsi || "";
-			// 	document.getElementById("fFoto").value = item.foto || "";
-			// 	document.getElementById("fTersedia").checked = item.tersedia;
-			// }
-
-			// DEVELOPMENT
 			function editMenu(id) {
-				const item = allMenu.find((m) => m.id === id);
+				const item = allMenu.find(m => m.id === id);
 				if (!item) return;
-				document.getElementById("editId").value = id;
-				document.getElementById("fNama").value = item.nama;
-				document.getElementById("fKategori").value = item.kategori;
-				document.getElementById("fHarga").value = item.harga;
-				document.getElementById("fDeskripsi").value = item.deskripsi || "";
-				document.getElementById("fTersedia").checked = item.tersedia;
-
-				// Tambah: tampilkan foto existing
-				const fFoto = document.getElementById("fFoto");
+				document.getElementById("editId").value        = id;
+				document.getElementById("fNama").value         = item.nama;
+				document.getElementById("fKategori").value     = item.kategori;
+				document.getElementById("fHarga").value        = item.harga;
+				document.getElementById("fDeskripsi").value    = item.deskripsi || "";
+				document.getElementById("fTersedia").checked   = item.tersedia;
 				const preview = document.getElementById("fotoPreview");
 				if (item.foto) {
-					fFoto.value = item.foto;
+					document.getElementById("fFoto").value = item.foto;
 					preview.innerHTML = `<img src="${item.foto}" style="width:100%;height:100%;object-fit:cover;">`;
-					document.getElementById("uploadStatus").textContent = "Foto sudah ada. Pilih foto baru untuk mengganti.";
+					document.getElementById("uploadStatus").textContent = "Foto sudah ada. Pilih baru untuk mengganti.";
 				} else {
-					fFoto.value = "";
+					document.getElementById("fFoto").value = "";
 					preview.innerHTML = "Belum ada foto";
 					document.getElementById("uploadStatus").textContent = "";
 				}
 				document.getElementById("uploadFotoBtn").style.display = "none";
+				// Scroll to form on mobile
+				document.getElementById("page-menu").scrollIntoView({ behavior: "smooth" });
 			}
 
-			// ── PREVIEW FOTO ─────────────────────────────────────────────────
 			function previewFoto(input) {
 				const file = input.files[0];
 				if (!file) return;
-
-				const preview = document.getElementById("fotoPreview");
 				const reader = new FileReader();
-				reader.onload = (e) => {
-					preview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+				reader.onload = e => {
+					document.getElementById("fotoPreview").innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
 				};
 				reader.readAsDataURL(file);
-
-				// Tampilkan tombol upload
 				document.getElementById("uploadFotoBtn").style.display = "block";
-				document.getElementById("uploadStatus").textContent = 'Foto dipilih, klik "Upload ke Drive" untuk menyimpan.';
-
-				// Reset URL lama
+				document.getElementById("uploadStatus").textContent = 'Foto dipilih, klik "Upload" untuk menyimpan.';
 				document.getElementById("fFoto").value = "";
 			}
-
-			// ── UPLOAD FOTO KE DRIVE ─────────────────────────────────────────
-			// async function uploadFoto() {
-			// 	const fileInput = document.getElementById("fFotoFile");
-			// 	const file = fileInput.files[0];
-			// 	if (!file) return;
-
-			// 	const uploadBtn = document.getElementById("uploadFotoBtn");
-			// 	const statusEl = document.getElementById("uploadStatus");
-
-			// 	uploadBtn.disabled = true;
-			// 	uploadBtn.textContent = "⏳ Mengupload...";
-			// 	statusEl.textContent = "Sedang upload ke Google Drive...";
-
-			// 	// Convert file ke base64
-			// 	const base64 = await new Promise((resolve) => {
-			// 		const reader = new FileReader();
-			// 		reader.onload = (e) => {
-			// 			// Hapus prefix "data:image/xxx;base64,"
-			// 			resolve(e.target.result.split(",")[1]);
-			// 		};
-			// 		reader.readAsDataURL(file);
-			// 	});
-
-			// 	try {
-			// 		const params = new URLSearchParams({
-			// 			action: "uploadFoto",
-			// 			base64: base64,
-			// 			mimeType: file.type,
-			// 			fileName: file.name,
-			// 		});
-
-			// 		const res = await fetch(`${APPS_SCRIPT_URL}?${params}`);
-			// 		const result = await res.json();
-
-			// 		if (result.success) {
-			// 			// Simpan URL ke hidden input
-			// 			document.getElementById("fFoto").value = result.url;
-			// 			statusEl.style.color = "var(--success)";
-			// 			statusEl.textContent = "✅ Foto berhasil diupload ke Drive!";
-			// 			uploadBtn.textContent = "✅ Uploaded";
-			// 		} else {
-			// 			statusEl.style.color = "var(--danger)";
-			// 			statusEl.textContent = "❌ Gagal upload: " + (result.error || "");
-			// 			uploadBtn.disabled = false;
-			// 			uploadBtn.textContent = "☁️ Upload ke Drive";
-			// 		}
-			// 	} catch (e) {
-			// 		statusEl.style.color = "var(--danger)";
-			// 		statusEl.textContent = "❌ Gagal koneksi ke server";
-			// 		uploadBtn.disabled = false;
-			// 		uploadBtn.textContent = "☁️ Upload ke Drive";
-			// 	}
-			// }
 
 			async function uploadFoto() {
 				const fileInput = document.getElementById("fFotoFile");
 				const file = fileInput.files[0];
 				if (!file) return;
-
 				const uploadBtn = document.getElementById("uploadFotoBtn");
-				const statusEl = document.getElementById("uploadStatus");
-
+				const statusEl  = document.getElementById("uploadStatus");
 				uploadBtn.disabled = true;
 				uploadBtn.textContent = "⏳ Mengupload...";
 				statusEl.textContent = "Mengompres foto...";
-
 				try {
-					// Kompres foto dulu sebelum convert ke base64
-					const compressedBase64 = await compressImage(file, 800, 0.7);
-					// Hapus prefix "data:image/jpeg;base64,"
-					const base64Only = compressedBase64.split(",")[1];
-
+					const compressed = await compressImage(file, 800, 0.7);
+					const base64Only = compressed.split(",")[1];
 					statusEl.textContent = "Mengupload ke Google Drive...";
-
-					// Kirim via POST untuk hindari "content too large"
 					const res = await fetch(APPS_SCRIPT_URL, {
 						method: "POST",
 						headers: { "Content-Type": "text/plain" },
-						body: JSON.stringify({
-							action: "uploadFoto",
-							base64: base64Only,
-							mimeType: "image/jpeg",
-							fileName: file.name.replace(/\.[^/.]+$/, "") + ".jpg",
-						}),
+						body: JSON.stringify({ action: "uploadFoto", base64: base64Only, mimeType: "image/jpeg", fileName: file.name.replace(/\.[^/.]+$/, "") + ".jpg" })
 					});
-
 					const result = await res.json();
-
 					if (result.success) {
 						document.getElementById("fFoto").value = result.url;
 						statusEl.style.color = "var(--success)";
-						statusEl.textContent = "✅ Foto berhasil diupload ke Drive!";
+						statusEl.textContent = "✅ Foto berhasil diupload!";
 						uploadBtn.textContent = "✅ Uploaded";
-					} else {
-						throw new Error(result.error || "Unknown error");
-					}
-				} catch (e) {
+					} else { throw new Error(result.error || "Unknown error"); }
+				} catch(e) {
 					statusEl.style.color = "var(--danger)";
 					statusEl.textContent = "❌ Gagal: " + e.message;
 					uploadBtn.disabled = false;
-					uploadBtn.textContent = "☁️ Upload ke Drive";
+					uploadBtn.textContent = "☁️ Upload";
 				}
 			}
 
-			// Fungsi kompres gambar pakai Canvas
 			function compressImage(file, maxWidth, quality) {
-				return new Promise((resolve) => {
+				return new Promise(resolve => {
 					const reader = new FileReader();
-					reader.onload = (e) => {
+					reader.onload = e => {
 						const img = new Image();
 						img.onload = () => {
 							const canvas = document.createElement("canvas");
-
-							// Hitung ukuran baru dengan pertahankan aspect ratio
-							let width = img.width;
-							let height = img.height;
-							if (width > maxWidth) {
-								height = Math.round((height * maxWidth) / width);
-								width = maxWidth;
-							}
-
-							canvas.width = width;
-							canvas.height = height;
-
-							// Draw & kompres
-							const ctx = canvas.getContext("2d");
-							ctx.drawImage(img, 0, 0, width, height);
-
-							// Export sebagai JPEG dengan quality 0.7 (70%)
+							let w = img.width, h = img.height;
+							if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+							canvas.width = w; canvas.height = h;
+							canvas.getContext("2d").drawImage(img, 0, 0, w, h);
 							resolve(canvas.toDataURL("image/jpeg", quality));
 						};
 						img.src = e.target.result;
@@ -1228,7 +1006,6 @@
 				});
 			}
 
-			// ── HAPUS FOTO ────────────────────────────────────────────────────
 			function hapusFoto() {
 				document.getElementById("fFoto").value = "";
 				document.getElementById("fFotoFile").value = "";
@@ -1237,61 +1014,24 @@
 				document.getElementById("uploadStatus").textContent = "";
 			}
 
-			// ── HAPUS ITEM MENU ───────────────────────────────────────────────
 			function confirmDeleteMenu(id, nama) {
-				if (!confirm(`Yakin mau hapus "${nama}"?\nData akan dihapus permanen dari spreadsheet.`)) return;
+				if (!confirm(`Yakin hapus "${nama}"?\nData dihapus permanen.`)) return;
 				deleteMenu(id, nama);
 			}
 
 			async function deleteMenu(id, nama) {
 				try {
-					const params = new URLSearchParams({
-						action: "deleteMenu",
-						id: id,
-					});
+					const params = new URLSearchParams({ action: "deleteMenu", id });
 					const res = await fetch(`${APPS_SCRIPT_URL}?${params}`);
 					const result = await res.json();
-
 					if (result.success) {
-						allMenu = allMenu.filter((m) => m.id !== id);
+						allMenu = allMenu.filter(m => m.id !== id);
 						renderMenuList();
 						showNotif(`"${nama}" berhasil dihapus!`);
-					} else {
-						showNotif("Gagal hapus: " + (result.error || ""));
-					}
-				} catch (e) {
-					showNotif("Gagal koneksi ke server");
-				}
+					} else { showNotif("Gagal hapus: " + (result.error || "")); }
+				} catch(e) { showNotif("Gagal koneksi ke server"); }
 			}
 
-			// ASLI
-			// async function saveMenu() {
-			// 	const id = document.getElementById("editId").value;
-			// 	const item = {
-			// 		id: id || String(Date.now()),
-			// 		nama: document.getElementById("fNama").value,
-			// 		kategori: document.getElementById("fKategori").value,
-			// 		harga: parseInt(document.getElementById("fHarga").value) || 0,
-			// 		deskripsi: document.getElementById("fDeskripsi").value,
-			// 		foto: document.getElementById("fFoto").value,
-			// 		tersedia: document.getElementById("fTersedia").checked,
-			// 	};
-			// 	if (!item.nama || !item.harga) {
-			// 		showNotif("Nama dan harga wajib diisi!");
-			// 		return;
-			// 	}
-			// 	const idx = allMenu.findIndex((m) => m.id === id);
-			// 	if (idx >= 0) allMenu[idx] = item;
-			// 	else allMenu.push(item);
-			// 	if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbw5cNKjKQ-z7Q4CBPcOhg5PiMTtzYGh_snUr5yNG1-5Y5EOz-fAsjfT9L_CgQPa_4PV/exec") {
-			// 		fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "saveMenu", item }) }).catch(() => {});
-			// 	}
-			// 	renderMenuList();
-			// 	clearForm();
-			// 	showNotif(id ? "Menu berhasil diperbarui!" : "Menu baru berhasil ditambahkan!");
-			// }
-
-			// DEVELOPMENT
 			async function saveMenu() {
 				const id = document.getElementById("editId").value;
 				const item = {
@@ -1303,199 +1043,95 @@
 					foto: document.getElementById("fFoto").value,
 					tersedia: document.getElementById("fTersedia").checked,
 				};
-
-				if (!item.nama || !item.harga) {
-					showNotif("Nama dan harga wajib diisi!");
-					return;
-				}
-
-				// Ganti POST → GET params, item di-JSON stringify
-				const params = new URLSearchParams({
-					action: "saveMenu",
-					item: JSON.stringify(item),
-				});
-
+				if (!item.nama || !item.harga) { showNotif("Nama dan harga wajib diisi!"); return; }
+				const params = new URLSearchParams({ action: "saveMenu", item: JSON.stringify(item) });
 				try {
 					await fetch(`${APPS_SCRIPT_URL}?${params}`);
-					const idx = allMenu.findIndex((m) => m.id === id);
-					if (idx >= 0) allMenu[idx] = item;
-					else allMenu.push(item);
+					const idx = allMenu.findIndex(m => m.id === id);
+					if (idx >= 0) allMenu[idx] = item; else allMenu.push(item);
 					renderMenuList();
 					clearForm();
-					showNotif(id ? "Menu berhasil diperbarui!" : "Menu baru berhasil ditambahkan!");
-				} catch (e) {
-					showNotif("Gagal menyimpan menu, cek koneksi!");
-				}
+					showNotif(id ? "Menu berhasil diperbarui!" : "Menu baru ditambahkan!");
+				} catch(e) { showNotif("Gagal menyimpan menu!"); }
 			}
 
 			function clearForm() {
-				document.getElementById("editId").value = "";
-				document.getElementById("fNama").value = "";
-				document.getElementById("fHarga").value = "";
-				document.getElementById("fDeskripsi").value = "";
-				document.getElementById("fFoto").value = "";
+				["editId","fNama","fHarga","fDeskripsi","fFoto"].forEach(id => document.getElementById(id).value = "");
 				document.getElementById("fTersedia").checked = true;
 				hapusFoto();
 			}
 
-			// ========== LAPORAN ==========
+			// ── LAPORAN ────────────────────────────────────────────
 			function renderReport() {
-				const selesaiOrders = allOrders.filter((o) => o.status === "Selesai");
+				const selesaiOrders = allOrders.filter(o => o.status === "Selesai");
 				const omzet = selesaiOrders.reduce((s, o) => s + (o.total || 0), 0);
-				const avg = selesaiOrders.length ? Math.round(omzet / selesaiOrders.length) : 0;
-				document.getElementById("r-omzet").textContent = "Rp " + omzet.toLocaleString("id-ID");
+				const avg   = selesaiOrders.length ? Math.round(omzet / selesaiOrders.length) : 0;
+				document.getElementById("r-omzet").textContent     = "Rp " + omzet.toLocaleString("id-ID");
 				document.getElementById("r-transaksi").textContent = selesaiOrders.length;
-				document.getElementById("r-rata").textContent = "Rp " + avg.toLocaleString("id-ID");
+				document.getElementById("r-rata").textContent      = "Rp " + avg.toLocaleString("id-ID");
 
 				const itemCounts = {};
-				selesaiOrders.forEach((o) =>
-					(o.items || []).forEach((i) => {
-						if (!itemCounts[i.nama]) itemCounts[i.nama] = { qty: 0, total: 0 };
-						itemCounts[i.nama].qty += i.qty;
-						itemCounts[i.nama].total += i.subtotal;
-					}),
-				);
+				selesaiOrders.forEach(o => (o.items || []).forEach(i => {
+					if (!itemCounts[i.nama]) itemCounts[i.nama] = { qty: 0, total: 0 };
+					const menuItem = allMenu.find(m => m.nama === i.nama);
+					const harga = menuItem ? menuItem.harga : 0;
+					const subtotal = i.subtotal || harga * i.qty;
+					itemCounts[i.nama].qty += i.qty;
+					itemCounts[i.nama].total += subtotal;
+				}));
 
-				// selesaiOrders.forEach((o) =>
-				// 	(o.items || []).forEach((i) => {
-				// 		if (!itemCounts[i.nama]) itemCounts[i.nama] = { qty: 0, total: 0 };
-				// 		// Pakai subtotal kalau ada, kalau tidak cari harga dari allMenu
-				// 		const menuItem = allMenu.find((m) => m.nama === i.nama);
-				// 		const harga = menuItem ? menuItem.harga : 0;
-				// 		const subtotal = i.subtotal || harga * i.qty;
-				// 		itemCounts[i.nama].qty += i.qty;
-				// 		itemCounts[i.nama].total += subtotal;
-				// 	}),
-				// );
 				const sorted = Object.entries(itemCounts).sort((a, b) => b[1].qty - a[1].qty);
 				document.getElementById("r-terlaris").textContent = sorted[0]?.[0] || "—";
 
 				const topBody = document.getElementById("topItemsTable");
 				topBody.innerHTML = sorted.length
-					? sorted
-							.slice(0, 8)
-							.map(([nama, d], i) => `<tr><td>${i === 0 ? "🏆 " : ""}${nama}</td><td>${d.qty}</td><td>Rp ${d.total.toLocaleString("id-ID")}</td></tr>`)
-							.join("")
+					? sorted.slice(0, 8).map(([nama, d], i) =>
+						`<tr><td>${i === 0 ? "🏆 " : ""}${nama}</td><td>${d.qty}</td><td>Rp ${d.total.toLocaleString("id-ID")}</td></tr>`
+					).join("")
 					: '<tr><td colspan="3" class="loading-row">Belum ada data</td></tr>';
 
 				renderChart(selesaiOrders);
 			}
 
-			// ASLI
-			// function renderChart(orders) {
-			// 	const days = [];
-			// 	const revenues = [];
-			// 	for (let i = 6; i >= 0; i--) {
-			// 		const d = new Date();
-			// 		d.setDate(d.getDate() - i);
-			// 		const label = d.toLocaleDateString("id-ID", { weekday: "short" });
-			// 		days.push(label);
-			// 		// Demo: simulate revenue per day
-			// 		revenues.push(Math.round(40000 + Math.random() * 120000));
-			// 	}
-			// 	if (revenueChart) revenueChart.destroy();
-			// 	const ctx = document.getElementById("revenueChart").getContext("2d");
-			// 	revenueChart = new Chart(ctx, {
-			// 		type: "bar",
-			// 		data: {
-			// 			labels: days,
-			// 			datasets: [
-			// 				{
-			// 					label: "Omzet (Rp)",
-			// 					data: revenues,
-			// 					backgroundColor: "#C4A882",
-			// 					borderRadius: 6,
-			// 					borderSkipped: false,
-			// 				},
-			// 			],
-			// 		},
-			// 		options: {
-			// 			responsive: true,
-			// 			maintainAspectRatio: false,
-			// 			plugins: { legend: { display: false } },
-			// 			scales: {
-			// 				y: { beginAtZero: true, ticks: { callback: (v) => "Rp " + (v / 1000).toFixed(0) + "rb", font: { size: 11 } }, grid: { color: "#F0EDE8" } },
-			// 				x: { ticks: { font: { size: 11 } }, grid: { display: false } },
-			// 			},
-			// 		},
-			// 	});
-			// }
-
-			// DEVELOPMENT
 			function renderChart(orders) {
-				// Buat label 7 hari terakhir
-				const days = [];
-				const dateKeys = [];
+				const days = [], dateKeys = [];
 				for (let i = 6; i >= 0; i--) {
 					const d = new Date();
 					d.setDate(d.getDate() - i);
-					const label = d.toLocaleDateString("id-ID", { weekday: "short", day: "2-digit", month: "2-digit" });
-					// Key format dd/mm/yyyy untuk matching ke kolom waktu spreadsheet
-					const key = d.toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, "/"); // "15/04/2026"
-					days.push(label);
-					dateKeys.push(key);
+					days.push(d.toLocaleDateString("id-ID", { weekday: "short", day: "2-digit", month: "2-digit" }));
+					dateKeys.push(d.toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, "/"));
 				}
-
-				// Grouping omzet per hari dari data Orders
-				// Format waktu di sheet: "15/04/2026, 11.26"
 				const revenueByDay = {};
-				dateKeys.forEach((k) => (revenueByDay[k] = 0));
-
-				orders.forEach((o) => {
-					if (o.status !== "Selesai") return;
+				dateKeys.forEach(k => revenueByDay[k] = 0);
+				orders.forEach(o => {
 					if (!o.waktu) return;
-					// Ambil bagian tanggal saja sebelum koma: "15/04/2026"
 					const tanggal = String(o.waktu).split(",")[0].trim();
-					if (revenueByDay.hasOwnProperty(tanggal)) {
-						revenueByDay[tanggal] += o.total || 0;
-					}
+					if (revenueByDay.hasOwnProperty(tanggal)) revenueByDay[tanggal] += o.total || 0;
 				});
-
-				const revenues = dateKeys.map((k) => revenueByDay[k]);
-
+				const revenues = dateKeys.map(k => revenueByDay[k]);
 				if (revenueChart) revenueChart.destroy();
 				const ctx = document.getElementById("revenueChart").getContext("2d");
 				revenueChart = new Chart(ctx, {
 					type: "bar",
-					data: {
-						labels: days,
-						datasets: [
-							{
-								label: "Omzet (Rp)",
-								data: revenues,
-								backgroundColor: "#C4A882",
-								borderRadius: 6,
-								borderSkipped: false,
-							},
-						],
-					},
+					data: { labels: days, datasets: [{ label: "Omzet (Rp)", data: revenues, backgroundColor: "#C4A882", borderRadius: 6, borderSkipped: false }] },
 					options: {
-						responsive: true,
-						maintainAspectRatio: false,
+						responsive: true, maintainAspectRatio: false,
 						plugins: { legend: { display: false } },
 						scales: {
-							y: {
-								beginAtZero: true,
-								ticks: {
-									callback: (v) => "Rp " + (v / 1000).toFixed(0) + "rb",
-									font: { size: 11 },
-								},
-								grid: { color: "#F0EDE8" },
-							},
-							x: {
-								ticks: { font: { size: 11 } },
-								grid: { display: false },
-							},
-						},
-					},
+							y: { beginAtZero: true, ticks: { callback: v => "Rp " + (v/1000).toFixed(0) + "rb", font: { size: 11 } }, grid: { color: "#F0EDE8" } },
+							x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+						}
+					}
 				});
 			}
 
 			function showPage(name, navEl) {
-				document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
-				document.querySelectorAll(".nav-item").forEach((n) => n.classList.remove("active"));
+				document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+				document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
 				document.getElementById("page-" + name).classList.add("active");
 				navEl.classList.add("active");
+				closeSidebar();
+				if (name === "orders") setTimeout(setOrdersHeight, 50);
 			}
 
 			function showNotif(msg) {
@@ -1507,6 +1143,7 @@
 
 			loadAllData();
 			setInterval(loadAllData, 30000);
+			setTimeout(setOrdersHeight, 100);
 		</script>
 	</body>
 </html>

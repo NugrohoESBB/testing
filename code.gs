@@ -464,7 +464,7 @@ function submitOrder(payload) {
 		sheet = ss.insertSheet("Orders");
 		sheet.appendRow(["Order ID", "Nomor Meja", "Nama Pelanggan", "Item Pesanan", "Total", "Catatan", "Waktu", "Status"]);
 		// Format header
-		sheet.getRange(1, 1, 1, 8).setBackground("#1A1714").setFontColor("#FFFFFF").setFontWeight("bold");
+		sheet.getRange(1, 1, 1, 8).setBackground("#1a1714").setFontColor("#ffffff").setFontWeight("bold");
 	}
 
 	// Generate order ID
@@ -487,7 +487,7 @@ function submitOrder(payload) {
 
 	// Format baris baru
 	const newRow = sheet.getLastRow();
-	sheet.getRange(newRow, 5).setNumberFormat('"Rp"#,##0');
+	sheet.getRange(newRow, 7).setNumberFormat('"Rp"#,##0');
 
 	return { success: true, orderId };
 }
@@ -505,7 +505,7 @@ function getOrders() {
 		.reverse()
 		.map((row) => {
 			// Parse items dari string kembali ke array
-			const itemsRaw = String(row[3]);
+			const itemsRaw = String(row[5]);
 			// const items = itemsRaw.split(', ').map(s => {
 			//   const match = s.match(/^(.+?) ×(\d+)/);
 			//   return match ? { nama: match[1], qty: parseInt(match[2]) } : { nama: s, qty: 1 };
@@ -528,11 +528,13 @@ function getOrders() {
 				id: row[0],
 				nomorMeja: String(row[1]),
 				namaPelanggan: row[2] || "",
+				noWhatsapp: row[3] || "",
+				tipeLayanan: row[4] || "",
 				items,
-				total: Number(row[4]) || 0,
-				catatan: row[5] || "",
-				waktu: row[6] || "",
-				status: row[7] || "Baru",
+				total: Number(row[6]) || 0,
+				catatan: row[7] || "",
+				waktu: row[8] || "",
+				status: row[9] || "Baru",
 			};
 		});
 
@@ -554,13 +556,13 @@ function updateOrderStatus(payload) {
 
 	// Beri warna baris sesuai status
 	const statusColors = {
-		Baru: "#EFF6FF",
-		Diproses: "#FEF9EE",
-		Selesai: "#F0F7F2",
-		Batal: "#FEF2F2",
+		Baru: "#eff6ff",
+		Diproses: "#fef9ee",
+		Selesai: "#f0f7f2",
+		Batal: "#fef2f2",
 	};
-	const color = statusColors[payload.status] || "#FFFFFF";
-	sheet.getRange(rowIdx + 1, 1, 1, 8).setBackground(color);
+	const color = statusColors[payload.status] || "#ffffff";
+	sheet.getRange(rowIdx + 1, 1, 1, 10).setBackground(color);
 
 	return { success: true };
 }
@@ -568,7 +570,6 @@ function updateOrderStatus(payload) {
 // ================================================================
 // SETUP AWAL — Jalankan sekali untuk buat semua sheet
 // ================================================================
-
 function setupSheets() {
 	const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
@@ -577,7 +578,7 @@ function setupSheets() {
 	if (!menuSheet) menuSheet = ss.insertSheet("Menu");
 	if (menuSheet.getLastRow() === 0) {
 		menuSheet.appendRow(["id", "nama", "kategori", "harga", "deskripsi", "foto", "tersedia"]);
-		menuSheet.getRange(1, 1, 1, 7).setBackground("#C4A882").setFontWeight("bold");
+		menuSheet.getRange(1, 1, 1, 7).setBackground("#c4a882").setFontWeight("bold");
 		// Data contoh
 		const sampleMenu = [
 			["1", "Kopi Susu", "Minuman", 28000, "Espresso dengan susu segar pilihan", "", true],
@@ -595,8 +596,8 @@ function setupSheets() {
 	let ordersSheet = ss.getSheetByName("Orders");
 	if (!ordersSheet) ordersSheet = ss.insertSheet("Orders");
 	if (ordersSheet.getLastRow() === 0) {
-		ordersSheet.appendRow(["Order ID", "Nomor Meja", "Nama Pelanggan", "Item Pesanan", "Total", "Catatan", "Waktu", "Status"]);
-		ordersSheet.getRange(1, 1, 1, 8).setBackground("#1A1714").setFontColor("#FFFFFF").setFontWeight("bold");
+		ordersSheet.appendRow(["Order ID", "Nomor Meja", "Nama Pelanggan", "No. WhatsApp", "Tipe Layanan", "Item Pesanan", "Total", "Catatan", "Waktu", "Status"]);
+		ordersSheet.getRange(1, 1, 1, 8).setBackground("#c4a882").setFontColor("#ffffff").setFontWeight("bold");
 		ordersSheet.setColumnWidth(4, 300);
 		ordersSheet.setColumnWidth(7, 150);
 	}
@@ -604,6 +605,8 @@ function setupSheets() {
 	Logger.log("Setup selesai!");
 	SpreadsheetApp.getUi().alert("Setup berhasil! Sheet Menu dan Orders sudah siap.");
 }
+
+
 
 // untuk di appsscript.json
 // enable appsscript.json di project setting
